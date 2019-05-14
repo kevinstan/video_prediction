@@ -26,47 +26,53 @@ from src.utils import preprocess
 import tensorflow as tf
 
 # -----------------------------------------------------------------------------
-FLAGS = tf.app.flags.FLAGS
 
-FLAGS.DEFINE_string('train_data_paths', '', 'train data paths.')
-FLAGS.DEFINE_string('valid_data_paths', '', 'validation data paths.')
-FLAGS.DEFINE_string('save_dir', '', 'dir to store trained net.')
-FLAGS.DEFINE_string('gen_frm_dir', '', 'dir to store result.')
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
-FLAGS.DEFINE_boolean('is_training', True, 'training or testing')
-FLAGS.DEFINE_string('dataset_name', 'mnist', 'The name of dataset.')
-FLAGS.DEFINE_integer('input_length', 10, 'input length.')
-FLAGS.DEFINE_integer('total_length', 20, 'total input and output length.')
-FLAGS.DEFINE_integer('img_width', 64, 'input image width.')
-FLAGS.DEFINE_integer('img_channel', 1, 'number of image channel.')
-FLAGS.DEFINE_integer('patch_size', 1, 'patch size on one dimension.')
-FLAGS.DEFINE_boolean('reverse_input', False,
+#
+flags = tf.app.flags
+
+flags.DEFINE_string('train_data_paths', '', 'train data paths.')
+flags.DEFINE_string('valid_data_paths', '', 'validation data paths.')
+flags.DEFINE_string('save_dir', '', 'dir to store trained net.')
+flags.DEFINE_string('gen_frm_dir', '', 'dir to store result.')
+
+flags.DEFINE_boolean('is_training', True, 'training or testing')
+flags.DEFINE_string('dataset_name', 'mnist', 'The name of dataset.')
+flags.DEFINE_integer('input_length', 10, 'input length.')
+flags.DEFINE_integer('total_length', 20, 'total input and output length.')
+flags.DEFINE_integer('img_width', 64, 'input image width.')
+flags.DEFINE_integer('img_channel', 1, 'number of image channel.')
+flags.DEFINE_integer('patch_size', 1, 'patch size on one dimension.')
+flags.DEFINE_boolean('reverse_input', False,
                      'reverse the input/outputs during training.')
 
-FLAGS.DEFINE_string('model_name', 'e3d_lstm', 'The name of the architecture.')
-FLAGS.DEFINE_string('pretrained_model', '', '.ckpt file to initialize from.')
-FLAGS.DEFINE_string('num_hidden', '64,64,64,64',
+flags.DEFINE_string('model_name', 'e3d_lstm', 'The name of the architecture.')
+flags.DEFINE_string('pretrained_model', '', '.ckpt file to initialize from.')
+flags.DEFINE_string('num_hidden', '64,64,64,64',
                     'COMMA separated number of units of e3d lstms.')
-FLAGS.DEFINE_integer('filter_size', 5, 'filter of a e3d lstm layer.')
-FLAGS.DEFINE_boolean('layer_norm', True, 'whether to apply tensor layer norm.')
+flags.DEFINE_integer('filter_size', 5, 'filter of a e3d lstm layer.')
+flags.DEFINE_boolean('layer_norm', True, 'whether to apply tensor layer norm.')
 
-FLAGS.DEFINE_boolean('scheduled_sampling', True, 'for scheduled sampling')
-FLAGS.DEFINE_integer('sampling_stop_iter', 50000, 'for scheduled sampling.')
-FLAGS.DEFINE_float('sampling_start_value', 1.0, 'for scheduled sampling.')
-FLAGS.DEFINE_float('sampling_changing_rate', 0.00002, 'for scheduled sampling.')
+flags.DEFINE_boolean('scheduled_sampling', True, 'for scheduled sampling')
+flags.DEFINE_integer('sampling_stop_iter', 50000, 'for scheduled sampling.')
+flags.DEFINE_float('sampling_start_value', 1.0, 'for scheduled sampling.')
+flags.DEFINE_float('sampling_changing_rate', 0.00002, 'for scheduled sampling.')
 
-FLAGS.DEFINE_float('lr', 0.001, 'learning rate.')
-FLAGS.DEFINE_integer('batch_size', 8, 'batch size for training.')
-FLAGS.DEFINE_integer('max_iterations', 80000, 'max num of steps.')
-FLAGS.DEFINE_integer('display_interval', 1,
+flags.DEFINE_float('lr', 0.001, 'learning rate.')
+flags.DEFINE_integer('batch_size', 8, 'batch size for training.')
+flags.DEFINE_integer('max_iterations', 80000, 'max num of steps.')
+flags.DEFINE_integer('display_interval', 1,
                      'number of iters showing training loss.')
-FLAGS.DEFINE_integer('test_interval', 1000, 'number of iters for test.')
-FLAGS.DEFINE_integer('snapshot_interval', 1000,
+flags.DEFINE_integer('test_interval', 1000, 'number of iters for test.')
+flags.DEFINE_integer('snapshot_interval', 1000,
                      'number of iters saving models.')
-FLAGS.DEFINE_integer('num_save_samples', 10, 'number of sequences to be saved.')
-FLAGS.DEFINE_integer('n_gpu', 1,
+flags.DEFINE_integer('num_save_samples', 10, 'number of sequences to be saved.')
+flags.DEFINE_integer('n_gpu', 1,
                      'how many GPUs to distribute the training across.')
-FLAGS.DEFINE_boolean('allow_gpu_growth', True, 'allow gpu growth')
+flags.DEFINE_boolean('allow_gpu_growth', True, 'allow gpu growth')
+
+FLAGS = tf.app.flags.FLAGS
 
 
 def main(_):
