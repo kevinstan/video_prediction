@@ -18,9 +18,10 @@ cd ..
 python -u run.py \
     --is_training True \
     --dataset_name mnist \
-    --train_data_paths ~/data/moving-mnist-example/moving-mnist-train.npz \
-    --valid_data_paths ~/data/moving-mnist-example/moving-mnist-valid.npz \
-    --pretrained_model pretrain_model/moving_mnist_e3d_lstm/model.ckpt-80000 \
+    --train_data_paths data/moving-mnist-example/moving-mnist-train.npz \
+    --valid_data_paths data/moving-mnist-example/moving-mnist-valid.npz \
+    --pretrained_model checkpoints/_mnist_e3d_lstm_1700/model.ckpt-1700 \
+    --log_dir logs/_mnist_e3d_lstm_train \
     --save_dir checkpoints/_mnist_e3d_lstm \
     --gen_frm_dir results/_mnist_e3d_lstm \
     --model_name e3d_lstm \
@@ -38,7 +39,11 @@ python -u run.py \
     --sampling_delta_per_iter 0.00002 \
     --lr 0.001 \
     --batch_size 4 \
-    --max_iterations 1 \
-    --display_interval 1 \
-    --test_interval 1 \
-    --snapshot_interval 10000
+    --max_iterations 10000 \
+    --display_interval 50 \
+    --test_interval 50 \
+    --snapshot_interval 100 \
+    --log_interval 50
+
+
+# --pretrained_model mm_e3d_lstm_pretrain/model.ckpt-80000 \

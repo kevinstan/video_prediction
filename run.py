@@ -27,7 +27,7 @@ import tensorflow as tf
 
 # -----------------------------------------------------------------------------
 
-os.environ["CUDA_VISIBLE_DEVICES"]="1"
+os.environ["CUDA_VISIBLE_DEVICES"]="0,1,2,3"
 
 #
 flags = tf.app.flags
@@ -36,6 +36,7 @@ flags.DEFINE_string('train_data_paths', '', 'train data paths.')
 flags.DEFINE_string('valid_data_paths', '', 'validation data paths.')
 flags.DEFINE_string('save_dir', '', 'dir to store trained net.')
 flags.DEFINE_string('gen_frm_dir', '', 'dir to store result.')
+flags.DEFINE_string('log_dir', '', 'dir to log summary info for tensorboard')
 
 flags.DEFINE_boolean('is_training', True, 'training or testing')
 flags.DEFINE_string('dataset_name', 'mnist', 'The name of dataset.')
@@ -67,6 +68,7 @@ flags.DEFINE_integer('display_interval', 1,
 flags.DEFINE_integer('test_interval', 1000, 'number of iters for test.')
 flags.DEFINE_integer('snapshot_interval', 1000,
                      'number of iters saving models.')
+flags.DEFINE_integer('log_interval', 1, 'number of itrs to log to tensorboard')
 flags.DEFINE_integer('num_save_samples', 10, 'number of sequences to be saved.')
 flags.DEFINE_integer('n_gpu', 1,
                      'how many GPUs to distribute the training across.')
@@ -90,6 +92,9 @@ def main(_):
   FLAGS.n_gpu = len(gpu_list)
   print('Initializing models')
 
+  print('FLAGS.is_training:', FLAGS.is_training)
+
+  # build the computational graph
   model = Model(FLAGS)
 
   if FLAGS.is_training:
@@ -171,6 +176,8 @@ def train_wrapper(model):
       trainer.test(model, test_input_handle, FLAGS, itr)
 
     train_input_handle.next()
+
+  model.writer.close()
 
 
 def test_wrapper(model):

@@ -93,8 +93,8 @@ class EideticLSTMCell(object):
     beta_init = tf.constant_initializer(self._norm_shift)
     with tf.variable_scope(scope):
       # Initialize beta and gamma for use by layer_norm.
-      tf.get_variable("gamma", shape=shape, initializer=gamma_init, dtype=dtype)
-      tf.get_variable("beta", shape=shape, initializer=beta_init, dtype=dtype)
+      # tf.summary.scalar('gamma', tf.get_variable("gamma", shape=shape, initializer=gamma_init, dtype=dtype))
+      # tf.summary.scalar('beta', tf.get_variable("beta", shape=shape, initializer=beta_init, dtype=dtype))
     normalized = layers.layer_norm(inp, reuse=True, scope=scope)
     return normalized
 
@@ -160,6 +160,7 @@ class EideticLSTMCell(object):
     return attn
 
   def _conv(self, inputs, output_channels, kernel_shape):
+    # print('shape of inputs inside _conv:', inputs.shape)
     if self._conv_ndims == 2:
       return tf.layers.conv2d(
           inputs, output_channels, kernel_shape, padding="same")
@@ -169,6 +170,7 @@ class EideticLSTMCell(object):
 
   def __call__(self, inputs, hidden, cell, global_memory, eidetic_cell):
     with tf.variable_scope(self._layer_name):
+      # print('shape of inputs inside cell unit:', inputs.shape)
       new_hidden = self._conv(hidden, 4 * self._output_channels,
                               self._kernel_shape)
       if self._layer_norm:
@@ -189,6 +191,7 @@ class EideticLSTMCell(object):
 
       new_cell = cell + self._attn(r_t, eidetic_cell, eidetic_cell)
       new_cell = self._norm(new_cell, "self_attn") + i_t * g_t
+      # tf.summary.histogram('3D_recall_attn', new_cell)
 
       new_global_memory = self._conv(global_memory, 4 * self._output_channels,
                                      self._kernel_shape)

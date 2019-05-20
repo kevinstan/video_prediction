@@ -116,16 +116,27 @@ class Model(object):
         maintain_averages_op)
 
     self.loss_train = loss_train[0] / self.configs.n_gpu
+    tf.summary.scalar('loss_train', self.loss_train)
 
     # session
     variables = tf.global_variables()
     self.saver = tf.train.Saver(variables)
+
+    # define init and config
     init = tf.global_variables_initializer()
     config_prot = tf.ConfigProto()
     config_prot.gpu_options.allow_growth = configs.allow_gpu_growth
     config_prot.allow_soft_placement = True
     self.sess = tf.Session(config=config_prot)
+
+    # define merged summaries and writer for tensorboard
+    self.merged = tf.summary.merge_all()
+    self.writer = tf.summary.FileWriter(configs.log_dir, self.sess.graph)
+
+    # run session initializer
     self.sess.run(init)
+
+    # load pretrained model and graph
     if self.configs.pretrained_model:
       self.saver.restore(self.sess, self.configs.pretrained_model)
 
@@ -134,8 +145,10 @@ class Model(object):
     feed_dict.update({self.tf_lr: lr})
     feed_dict.update({self.itr: float(itr)})
     feed_dict.update({self.real_input_flag: real_input_flag})
-    loss, _ = self.sess.run((self.loss_train, self.train_op), feed_dict)
-    return loss
+    summary, loss, _ = self.sess.run([self.merged, self.loss_train, self.train_op], feed_dict)
+    # loss, _ = self.sess.run((self.loss_train, self.train_op), feed_dict)
+    return summary, loss
+    # return loss
 
   def test(self, inputs, real_input_flag):
     feed_dict = {self.x[i]: inputs[i] for i in range(self.configs.n_gpu)}
@@ -156,6 +169,7 @@ class Model(object):
     """Contructs a model."""
     networks_map = {
         'e3d_lstm': eidetic_3d_lstm_net.rnn,
+        # 'concept_lstm': concept_lstm_net.rnn,
     }
 
     if self.configs.model_name in networks_map:

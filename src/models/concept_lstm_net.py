@@ -19,7 +19,6 @@ from __future__ import division
 from __future__ import print_function
 
 from src.layers.rnn_cell import Eidetic3DLSTMCell as eidetic_lstm
-# from src.layers.rnn_cell import Eidetic2DLSTMCell as eidetic_lstm
 import tensorflow as tf
 
 
@@ -50,7 +49,8 @@ def rnn(images, real_input_flag, num_layers, num_hidden, configs):
         output_channels=num_hidden[i],
         kernel_shape=[2, 5, 5])
     lstm_layer.append(new_lstm)
-    zero_state = tf.zeros([batch_size, window_length, ims_width, ims_height, num_hidden[i]])
+    zero_state = tf.zeros(
+        [batch_size, window_length, ims_width, ims_height, num_hidden[i]])
     cell.append(zero_state)
     hidden.append(zero_state)
     c_history.append(None)
@@ -87,13 +87,12 @@ def rnn(images, real_input_flag, num_layers, num_hidden, configs):
               inputs = input_frm
             else:
               inputs = hidden[i - 1]
-
             hidden[i], cell[i], memory = lstm_layer[i](
                 inputs, hidden[i], cell[i], memory, c_history[i])
-        # set trainable=True if training from scratch, o/w keep False for pretrained
+
         x_gen = tf.layers.conv3d(hidden[num_layers - 1], output_channels,
                                  [window_length, 1, 1], [window_length, 1, 1],
-                                 'same', trainable=False)
+                                 'same')
         x_gen = tf.squeeze(x_gen)
         gen_images.append(x_gen)
         reuse = True

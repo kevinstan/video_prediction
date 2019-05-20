@@ -16,11 +16,12 @@
 #!/usr/bin/env bash
 cd ..
 python -u run.py \
-    --is_training True \
+    --is_training False \
     --dataset_name action \
     --train_data_paths data/kth \
     --valid_data_paths data/kth \
     --pretrained_model kth_e3d_lstm_pretrain/model.ckpt-200000 \
+    --log_dir logs/_kth_e3d_lstm_test \
     --save_dir checkpoints/_kth_e3d_lstm \
     --gen_frm_dir results/_kth_e3d_lstm \
     --model_name e3d_lstm \
@@ -39,7 +40,7 @@ python -u run.py \
     --sampling_delta_per_iter 0.00001 \
     --lr 0.001 \
     --batch_size 2 \
-    --max_iterations 50000 \
-    --display_interval 10 \
-    --test_interval 100 \
-    --snapshot_interval 100
+    --max_iterations 1 \
+    --display_interval 1 \
+    --test_interval 1 \
+    --snapshot_interval 5000
