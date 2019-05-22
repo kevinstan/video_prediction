@@ -60,9 +60,11 @@ class EideticLSTMCell(object):
     """
     # super(EideticLSTMCell, self).__init__(name=name)
 
-    if conv_ndims != len(input_shape) - 1:
-      raise ValueError("Invalid input_shape {} for conv_ndims={}.".format(
-          input_shape, conv_ndims))
+    # if conv_ndims != len(input_shape) - 1:
+    #   print('conv_ndims is', conv_ndims)
+    #   print('len(input_shape)-1 is', len(input_shape)-1)
+    #   raise ValueError("Invalid input_shape {} for conv_ndims={}.".format(
+    #       input_shape, conv_ndims))
 
     self._conv_ndims = conv_ndims
     self._input_shape = input_shape
@@ -93,8 +95,8 @@ class EideticLSTMCell(object):
     beta_init = tf.constant_initializer(self._norm_shift)
     with tf.variable_scope(scope):
       # Initialize beta and gamma for use by layer_norm.
-      # tf.summary.scalar('gamma', tf.get_variable("gamma", shape=shape, initializer=gamma_init, dtype=dtype))
-      # tf.summary.scalar('beta', tf.get_variable("beta", shape=shape, initializer=beta_init, dtype=dtype))
+      tf.summary.histogram('gamma', tf.get_variable("gamma", shape=shape, initializer=gamma_init, dtype=dtype))
+      tf.summary.histogram('beta', tf.get_variable("beta", shape=shape, initializer=beta_init, dtype=dtype))
     normalized = layers.layer_norm(inp, reuse=True, scope=scope)
     return normalized
 
@@ -116,6 +118,8 @@ class EideticLSTMCell(object):
     """
     q_shape = in_query.get_shape().as_list()
     if len(q_shape) == 4:
+      print('dim of query is 4!')
+      print('q_shape is:', q_shape)
       batch = q_shape[0]
       width = q_shape[1]
       height = q_shape[2]
@@ -129,6 +133,7 @@ class EideticLSTMCell(object):
       raise ValueError("Invalid input_shape {} for the query".format(q_shape))
 
     k_shape = in_keys.get_shape().as_list()
+    print('keys shape:', k_shape)
     if len(k_shape) != 5:
       raise ValueError("Invalid input_shape {} for the keys".format(k_shape))
 
@@ -189,8 +194,9 @@ class EideticLSTMCell(object):
       r_t = tf.sigmoid(r_x + r_h)
       g_t = tf.tanh(g_x + g_h)
 
-      new_cell = cell + self._attn(r_t, eidetic_cell, eidetic_cell)
-      new_cell = self._norm(new_cell, "self_attn") + i_t * g_t
+      # new_cell = cell + self._attn(r_t, eidetic_cell, eidetic_cell)
+      # new_cell = self._norm(new_cell, "self_attn") + i_t * g_t
+      new_cell = self._norm(cell, "new_cell") + i_t * g_t
       # tf.summary.histogram('3D_recall_attn', new_cell)
 
       new_global_memory = self._conv(global_memory, 4 * self._output_channels,

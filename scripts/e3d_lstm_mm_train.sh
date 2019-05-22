@@ -20,7 +20,6 @@ python -u run.py \
     --dataset_name mnist \
     --train_data_paths data/moving-mnist-example/moving-mnist-train.npz \
     --valid_data_paths data/moving-mnist-example/moving-mnist-valid.npz \
-    --pretrained_model checkpoints/_mnist_e3d_lstm_1700/model.ckpt-1700 \
     --log_dir logs/_mnist_e3d_lstm_train \
     --save_dir checkpoints/_mnist_e3d_lstm \
     --gen_frm_dir results/_mnist_e3d_lstm \
@@ -46,4 +45,5 @@ python -u run.py \
     --log_interval 50
 
 
+# --pretrained_model checkpoints/_mnist_e3d_lstm_1700/model.ckpt-1700 \
 # --pretrained_model mm_e3d_lstm_pretrain/model.ckpt-80000 \

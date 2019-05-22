@@ -55,14 +55,23 @@ class Model(object):
 
   def __init__(self, configs):
     self.configs = configs
+    # self.x = [
+    #     tf.placeholder(tf.float32, [
+    #         self.configs.batch_size, self.configs.total_length,
+    #         self.configs.img_width // self.configs.patch_size,
+    #         self.configs.img_width // self.configs.patch_size,
+    #         self.configs.patch_size * self.configs.patch_size *
+    #         self.configs.img_channel
+    #     ]) for i in range(self.configs.n_gpu)
+    # ]
     self.x = [
-        tf.placeholder(tf.float32, [
-            self.configs.batch_size, self.configs.total_length,
-            self.configs.img_width // self.configs.patch_size,
-            self.configs.img_width // self.configs.patch_size,
-            self.configs.patch_size * self.configs.patch_size *
-            self.configs.img_channel
-        ]) for i in range(self.configs.n_gpu)
+      tf.placeholder(tf.float32, [
+        self.configs.batch_size, self.configs.total_length,
+        self.configs.img_width // self.configs.patch_size,
+        self.configs.img_width // self.configs.patch_size,
+        self.configs.patch_size * self.configs.patch_size *
+        self.configs.img_channel
+      ]) for i in range(self.configs.n_gpu)
     ]
 
     self.real_input_flag = tf.placeholder(tf.float32, [
