@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+#
+# Modifications copyright (C) June 2019 by Kevin Tan
+#
+# ==============================================================================
 
 """Functions to train and evaluate."""
 
@@ -25,6 +29,8 @@ import cv2
 import numpy as np
 from skimage.measure import compare_ssim
 from src.utils import preprocess
+
+import tensorflow as tf
 
 
 def batch_psnr(gen_frames, gt_frames):
@@ -47,10 +53,10 @@ def train(model, ims, real_input_flag, configs, itr):
   summary, cost = model.train(ims_list, configs.lr, real_input_flag, itr)
   # cost = model.train(ims_list, configs.lr, real_input_flag, itr)
 
-  if configs.reverse_input:
-    ims_rev = np.split(ims[:, ::-1], configs.n_gpu)
-    cost += model.train(ims_rev, configs.lr, real_input_flag, itr)
-    cost = cost / 2
+  # if configs.reverse_input:
+  #   ims_rev = np.split(ims[:, ::-1], configs.n_gpu)
+  #   cost += model.train(ims_rev, configs.lr, real_input_flag, itr)
+  #   cost = cost / 2
 
   if itr % configs.display_interval == 0:
     print(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
@@ -148,5 +154,6 @@ def test(model, test_input_handle, configs, save_name):
 
   ssim = np.asarray(ssim, dtype=np.float32) / (configs.batch_size * batch_id)
   print('ssim per frame: ' + str(np.mean(ssim)))
+  tf.summary.scalar('ssim', ssim)
   for i in range(output_length):
       print(ssim[i])

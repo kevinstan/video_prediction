@@ -12,14 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+#
+# Modifications copyright (C) June 2019 by Kevin Tan
+#
+# ==============================================================================
 
 """Builds an E3D RNN."""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-# from src.layers.rnn_cell import Eidetic3DLSTMCell as eidetic_lstm
-from src.layers.rnn_cell import Eidetic2DLSTMCell as eidetic_lstm
+from src.layers.rnn_cell import Eidetic3DLSTMCell as eidetic_lstm
 import tensorflow as tf
 
 
@@ -28,11 +31,9 @@ def rnn(images, real_input_flag, num_layers, num_hidden, configs):
   gen_images, lstm_layer, cell, hidden, c_history = [], [], [], [], []
   shape = images.get_shape().as_list()
   batch_size = shape[0]
-  # seq_length = shape[1]
   ims_width = shape[2]
   ims_height = shape[3]
   output_channels = shape[-1]
-  # filter_size = configs.filter_size
   total_length = configs.total_length
   input_length = configs.input_length
 
@@ -48,11 +49,10 @@ def rnn(images, real_input_flag, num_layers, num_hidden, configs):
         name='e3d' + str(i),
         input_shape=[ims_width, window_length, ims_height, num_hidden_in],
         output_channels=num_hidden[i],
-        # kernel_shape=[2, 5, 5])
-        kernel_shape=[5, 5])
+        kernel_shape=[2, 5, 5])
     lstm_layer.append(new_lstm)
-    # zero_state = tf.zeros([batch_size, window_length, ims_width, ims_height, num_hidden[i]])
-    zero_state = tf.zeros([batch_size, window_length, ims_width*ims_height, num_hidden[i]])
+    zero_state = tf.zeros(
+        [batch_size, window_length, ims_width, ims_height, num_hidden[i]])
     cell.append(zero_state)
     hidden.append(zero_state)
     c_history.append(None)
@@ -87,38 +87,32 @@ def rnn(images, real_input_flag, num_layers, num_hidden, configs):
               c_history[i] = tf.concat([c_history[i], cell[i]], 1)
             if i == 0:
               inputs = input_frm
-              # Add 3D-encoder here:
-              inputs = tf.layers.conv3d(inputs, output_channels, [2,5,5], padding="same")
-              enc = inputs.shape
-              # (batch_size, length, height*width, channel)
-              inputs = tf.reshape(inputs, shape=(enc[0], enc[1], enc[2]*enc[3], enc[4]))
             else:
-              inputs = hidden[i - 1]
-
-            # print('inputs shape into rnn unit:', inputs.shape)
-
+              # input to 3rd layer is hidden state outputs from 1st and 2nd layer
+              if i == 2:
+                inputs = hidden[i-1] + hidden[i-2]
+              else:
+                inputs = hidden[i - 1]
             hidden[i], cell[i], memory = lstm_layer[i](
                 inputs, hidden[i], cell[i], memory, c_history[i])
-        # reshape hidden state from 4dim to 5dim (batch_size, length, width, height, channels)
-        hidden_state_clf = tf.reshape(hidden[num_layers - 1],
-                                             [batch_size, window_length, ims_width, ims_height, 64])
-        # print('shape of hidden after reshape:', hidden[num_layers-1].shape)
-        # set trainable=True if training from scratch, o/w keep False for pretrained
-        x_gen = tf.layers.conv3d(hidden_state_clf, output_channels,
+          # input to decoder is hidden state outputs from 3rd and 4th layer
+          dec_input = hidden[num_layers-1] + hidden[num_layers-2]
+
+
+        x_gen = tf.layers.conv3d(dec_input, output_channels,
                                  [window_length, 1, 1], [window_length, 1, 1],
-                                 'same', trainable=False)
-        # print('x_gen shape before squeeze:', x_gen.shape)
+                                 'same')
         x_gen = tf.squeeze(x_gen)
-        # print('x_gen shape after squeeze:', x_gen.shape)
         gen_images.append(x_gen)
         reuse = True
 
   gen_images = tf.stack(gen_images)
   gen_images = tf.transpose(gen_images, [1, 0, 2, 3, 4])
-  loss = tf.nn.l2_loss(gen_images - images[:, 1:])
-  loss += tf.reduce_sum(tf.abs(gen_images - images[:, 1:]))
+  l2_loss = tf.nn.l2_loss(gen_images - images[:, 1:])
+  l1_loss = tf.reduce_sum(tf.abs(gen_images - images[:, 1:]))
+  loss = l2_loss + l1_loss
 
   out_len = total_length - input_length
   out_ims = gen_images[:, -out_len:]
 
-  return [out_ims, loss]
+  return [out_ims, loss, l1_loss, l2_loss]

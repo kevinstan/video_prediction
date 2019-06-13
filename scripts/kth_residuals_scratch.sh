@@ -16,31 +16,31 @@
 #!/usr/bin/env bash
 cd ..
 python -u run.py \
-    --is_training 'False' \
-    --dataset_name mnist \
-    --train_data_paths data/moving-mnist-example/moving-mnist-train.npz \
-    --valid_data_paths data/moving-mnist-example/moving-mnist-valid.npz \
-    --pretrained_model mm_e3d_lstm_pretrain/model.ckpt-80000 \
-    --log_dir logs/_mnist_e3d_lstm_test \
-    --save_dir checkpoints/_mnist_e3d_lstm \
-    --gen_frm_dir results/_mnist_e3d_lstm \
+    --is_training True \
+    --dataset_name action \
+    --train_data_paths data/kth \
+    --valid_data_paths data/kth \
+    --log_dir logs/_kth_residuals_scratch \
+    --save_dir checkpoints/_kth_residuals_scratch \
+    --gen_frm_dir results/_kth_residuals_scratch \
     --model_name original_e3d_lstm_residuals \
     --allow_gpu_growth True \
     --img_channel 1 \
-    --img_width 64 \
+    --img_width 128 \
     --input_length 10 \
-    --total_length 20 \
+    --total_length 30 \
     --filter_size 5 \
     --num_hidden 64,64,64,64 \
-    --patch_size 4 \
+    --patch_size 8 \
     --layer_norm True \
-    --sampling_stop_iter 50000 \
+    --reverse_input False \
+    --sampling_stop_iter 100000 \
     --sampling_start_value 1.0 \
-    --sampling_delta_per_iter 0.00002 \
+    --sampling_delta_per_iter 0.00001 \
     --lr 0.001 \
-    --batch_size 4 \
-    --max_iterations 5 \
-    --display_interval 1 \
-    --test_interval 1 \
-    --snapshot_interval 10000 \
-    --log_interval 1
+    --batch_size 2 \
+    --max_iterations 200000 \
+    --display_interval 500 \
+    --test_interval 500 \
+    --snapshot_interval 500 \
+    --log_interval 500

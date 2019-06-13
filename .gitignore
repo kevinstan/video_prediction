@@ -5,3 +5,9 @@ images/
 results/
 checkpoints/
 logs/
+
+*.pyc
+
+src/models/eidetic_3d_lstm_net.py
+README.md
+.gitignore

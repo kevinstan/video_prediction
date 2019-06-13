@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
+#
+# Modifications copyright (C) June 2019 by Kevin Tan
+#
+# ==============================================================================
 
 """Main function to run the code."""
 from __future__ import absolute_import
@@ -38,7 +42,7 @@ flags.DEFINE_string('save_dir', '', 'dir to store trained net.')
 flags.DEFINE_string('gen_frm_dir', '', 'dir to store result.')
 flags.DEFINE_string('log_dir', '', 'dir to log summary info for tensorboard')
 
-flags.DEFINE_boolean('is_training', True, 'training or testing')
+flags.DEFINE_string('is_training', 'True', 'training or testing')
 flags.DEFINE_string('dataset_name', 'mnist', 'The name of dataset.')
 flags.DEFINE_integer('input_length', 10, 'input length.')
 flags.DEFINE_integer('total_length', 20, 'total input and output length.')
@@ -74,28 +78,40 @@ flags.DEFINE_integer('n_gpu', 1,
                      'how many GPUs to distribute the training across.')
 flags.DEFINE_boolean('allow_gpu_growth', True, 'allow gpu growth')
 
+flags.DEFINE_string('model_graph', 'model', 'for working with two graphs')
+
 FLAGS = tf.app.flags.FLAGS
 
 
 def main(_):
   """Main function."""
-  # print(FLAGS.reverse_input)
   if tf.gfile.Exists(FLAGS.save_dir):
     tf.gfile.DeleteRecursively(FLAGS.save_dir)
   tf.gfile.MakeDirs(FLAGS.save_dir)
   if tf.gfile.Exists(FLAGS.gen_frm_dir):
     tf.gfile.DeleteRecursively(FLAGS.gen_frm_dir)
   tf.gfile.MakeDirs(FLAGS.gen_frm_dir)
+  if tf.gfile.Exists(FLAGS.log_dir):
+    tf.gfile.DeleteRecursively(FLAGS.log_dir)
+  tf.gfile.MakeDirs(FLAGS.log_dir)
 
   gpu_list = np.asarray(
       os.environ.get('CUDA_VISIBLE_DEVICES', '-1').split(','), dtype=np.int32)
   FLAGS.n_gpu = len(gpu_list)
   print('Initializing models')
 
+  FLAGS.is_training = True if FLAGS.is_training == 'True' else False
   print('FLAGS.is_training:', FLAGS.is_training)
+  print('FLAGS.is_training type:', type(FLAGS.is_training))
+
+  print('log dir:', FLAGS.log_dir)
 
   # build the computational graph
   model = Model(FLAGS)
+
+  print("Total number of model parameters:", model.count_params())
+
+  print("Percentage of conv3d decoder params to total model params:", model.count_dec_params_fraction())
 
   if FLAGS.is_training:
     train_wrapper(model)
@@ -144,6 +160,7 @@ def schedule_sampling(eta, itr):
 def train_wrapper(model):
   """Wrapping function to train the model."""
   if FLAGS.pretrained_model:
+    print('loading pretrained model in train_wrappper()...')
     model.load(FLAGS.pretrained_model)
   # load data
   train_input_handle, test_input_handle = datasets_factory.data_provider(
@@ -181,6 +198,7 @@ def train_wrapper(model):
 
 
 def test_wrapper(model):
+  print('calling model load in run.py test_wrapper')
   model.load(FLAGS.pretrained_model)
   test_input_handle = datasets_factory.data_provider(
       FLAGS.dataset_name,

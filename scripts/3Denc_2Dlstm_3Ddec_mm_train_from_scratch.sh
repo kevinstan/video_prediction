@@ -16,15 +16,14 @@
 #!/usr/bin/env bash
 cd ..
 python -u run.py \
-    --is_training 'False' \
+    --is_training True \
     --dataset_name mnist \
     --train_data_paths data/moving-mnist-example/moving-mnist-train.npz \
     --valid_data_paths data/moving-mnist-example/moving-mnist-valid.npz \
-    --pretrained_model mm_e3d_lstm_pretrain/model.ckpt-80000 \
-    --log_dir logs/_mnist_e3d_lstm_test \
-    --save_dir checkpoints/_mnist_e3d_lstm \
-    --gen_frm_dir results/_mnist_e3d_lstm \
-    --model_name original_e3d_lstm_residuals \
+    --log_dir logs/_3Denc_2Dlstm_3Ddec_l2l1loss_from_scratch \
+    --save_dir checkpoints/_mnist_3Denc_2Dlstm_3Ddec_from_scratch \
+    --gen_frm_dir results/_mnist_3Denc_2Dlstm_3Ddec_from_scratch \
+    --model_name e3d_lstm \
     --allow_gpu_growth True \
     --img_channel 1 \
     --img_width 64 \
@@ -39,8 +38,12 @@ python -u run.py \
     --sampling_delta_per_iter 0.00002 \
     --lr 0.001 \
     --batch_size 4 \
-    --max_iterations 5 \
-    --display_interval 1 \
-    --test_interval 1 \
-    --snapshot_interval 10000 \
-    --log_interval 1
+    --max_iterations 80000 \
+    --display_interval 500 \
+    --test_interval 500 \
+    --snapshot_interval 500 \
+    --log_interval 500
+
+
+#
+# --pretrained_model checkpoints/_mnist_e3d_lstm_1700/model.ckpt-1700 \
