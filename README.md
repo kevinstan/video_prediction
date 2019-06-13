@@ -4,7 +4,7 @@ This repo contains a TensorFlow implementation of [**Mental Simulation with Self
 
 **Abstract**: Mental simulation -- the capacity to imagine objects and scenes in order to make decisions, predictions, and inferences about the world -- is a key feature of human cognition. Evidence from behavioral studies suggest that representations of visual imagery are spatial and sensitive to the causal structure of the world. Inspired by how humans anticipate future scenes, we aim to leverage state-of-the-art techniques in deep learning and computer vision to tackle the problem of spatiotemporal predictive learning in a self-supervised manner. We perform explorations across three architectural design choices: (i) the importance of 2D-convolution vs. 3D-convolution inside the cell of recurrent neural networks, (ii) the effectiveness of residual connections in stacked long short-term memory models for remembering spatial information over long time horizons, and (iii) the balance between $l_1$ norm and $l_2$ norm components in the objective function. Our extensive evaluations demonstrate that finetuning with residual connections achieves state-of-the-art performance on the Moving MNIST and KTH Action benchmark datasets. Potential application areas include weather forecasting, traffic flow prediction, and physical interaction simulation. 
 
-![](images/architecture.png)
+![](images/architecture_edit.png)
 ![](images/mm_visuals.png)
 ![](images/mm_1.png)
 ![](images/mm_results.png)
