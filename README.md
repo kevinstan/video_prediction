@@ -5,7 +5,7 @@ Mental simulation -- the capacity to imagine objects and scenes in order to make
 
 This repo contains a Tensorflow implementation of the paper [**Eidetic 3D LSTM: A Model for Video Prediction and Beyond**](https://openreview.net/forum?id=B1lKS2AqtX), ICLR 2019. 
 
-![](images/architecture.pdf)
+![](images/architecture.png)
 ![](images/mm_results.png)
 ![](images/mm_visuals.png)
 ![](images/mm_1.png)
