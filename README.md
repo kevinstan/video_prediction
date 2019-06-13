@@ -1,6 +1,6 @@
 # Mental Simulation with Self-Supervised Spatiotemporal Learning
 
-This repo contains a TensorFlow implementation of [Mental Simulation with Self-Supervised Spatiotemporal Learning]().
+This repo contains a TensorFlow implementation of [**Mental Simulation with Self-Supervised Spatiotemporal Learning**]().
 *Author*: Kevin Tan 
 *Commitee*: Dr. Zhuowen Tu, Dr. Virginia de Sa, Kwonjoon Lee
 
