@@ -93,3 +93,5 @@ First download the pretrained models. You can test it on the dataset:
 ## Acknowledgments
 This code is based on the TensorFlow implementation of the paper [**Eidetic 3D LSTM: A Model for Video Prediction and Beyond**](https://openreview.net/forum?id=B1lKS2AqtX), ICLR 2019. 
 
+This work is partly supported by the Halıcıoğlu Data Science Institute Undergraduate Scholarship.
+
