@@ -1,34 +1,14 @@
-# E3D-LSTM
+# E3D-LSTM with Deep Residual Connections
 
-It contains a Tensorflow implementation of the following paper:
-
-* [**Eidetic 3D LSTM: A Model for Video Prediction and Beyond**](https://openreview.net/forum?id=B1lKS2AqtX), ICLR 2019.
-
-*Please note that this is not an officially supported Google product.*
-
-If you find this code useful in your research then please cite
-
-```
-@inproceedings{wang2019eidetic,
-  title={Eidetic 3D LSTM: A Model for Video Prediction and Beyond},
-  author={Wang, Yunbo and Jiang, Lu and Yang, Ming-Hsuan and Li, Li-Jia and Long, Mingsheng and Fei-Fei, Li.},
-  booktitle={ICLR},
-  year={2019}
-}
-```
+Mental simulation -- the capacity to imagine objects and scenes in order to make decisions, predictions, and inferences about the world -- is a key feature of human cognition. Evidence from behavioral studies suggest that representations of visual imagery are spatial and sensitive to the causal structure of the world. Inspired by how humans anticipate future scenes, we aim to leverage state-of-the-art techniques in deep learning and computer vision to tackle the problem of spatiotemporal predictive learning in a self-supervised manner. We perform explorations across three architectural design choices: (i) the importance of 2D-convolution vs. 3D-convolution inside the cell of recurrent neural networks, (ii) the effectiveness of residual connections in stacked long short-term memory models for remembering spatial information over long time horizons, and (iii) the balance between $l_1$ norm and $l_2$ norm components in the objective function. Our extensive evaluations demonstrate that finetuning with residual connections achieves state-of-the-art performance on the Moving MNIST and KTH Action benchmark datasets. Potential application areas include weather forecasting, traffic flow prediction, and physical interaction simulation. 
 
 
-We present a new model, Eidetic 3D LSTM (E3D-LSTM), that integrates
-3D convolutions into RNNs. The encapsulated 3D-Conv makes local perceptrons
-of RNNs motion-aware and enables the memory cell to store better short-term
-features. We evaluate the E3D-LSTM network on (a) future video prediction
-(for unsupervised video representation learning) and early activity
-recognition to infer what is happening or what will happen after observing
-only limited frames of video.
+This repo contains a Tensorflow implementation of the paper [**Eidetic 3D LSTM: A Model for Video Prediction and Beyond**](https://openreview.net/forum?id=B1lKS2AqtX), ICLR 2019. 
 
-![Method](images/e3d_lstm_framework.png)
-
-
+![](images/architecture.pdf)
+![](images/mm_1.png)
+![](images/mm_results.png)
+![](images/mm_visuals.png)
 
 ## Setup
 
@@ -38,9 +18,10 @@ All code was developed and tested on Nvidia V100 the following environment.
 - opencv3
 - scikit-image
 - numpy
-- tensorflow>=1.0
+- tensorflow >=1.9.0
 - cuda>=8.0
 - cudnn>=5.0
+- 4 NVIDIA Titan X (Pascal) 12GB 
 
 Please download the data via the following external links.
 
@@ -101,12 +82,11 @@ Below are the parameters about our model:
 - `--input_length 10`: Input sequence length.
 - `--total_length 20`: Input and output sequence length in total.
 
-
 To test a model, set `--is_training False`.
 
 ## Pretrained Models
 
-First download our pretrained models. You can test it on the dataset:
+First download the pretrained models. You can test it on the dataset:
 
 * [Moving MNIST](https://storage.googleapis.com/e3d_lstm/pretrained_models/kth_e3d_lstm_pretrain.zip)
 * [KTH Actions](https://storage.googleapis.com/e3d_lstm/pretrained_models/moving_mnist_e3d_lstm_pretrain.zip)
